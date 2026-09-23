@@ -1,5 +1,16 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)');
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+  return isMobile;
+}
 
 const navItems = [
   { label: 'Dashboard', path: '/dashboard', roles: ['ADMIN','OPS','QUEEN','LOGISTICS','RETAILER'] },
@@ -25,22 +36,38 @@ export default function Layout({ user, onLogout, title, breadcrumb, children }) 
   const location = useLocation();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
+  const isMobile = useIsMobile();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = () => {
     onLogout();
     navigate('/login');
   };
 
+  // On mobile, close the drawer automatically whenever the route changes
+  // (e.g. tapping a nav link) — otherwise it stays open over the new page.
+  useEffect(() => { setMobileOpen(false); }, [location.pathname]);
+
   const visibleNavItems = navItems.filter(item => item.roles.includes(user.role));
+  const sidebarCollapsed = isMobile ? false : collapsed;
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#0f1620' }}>
+      {isMobile && mobileOpen && (
+        <div onClick={() => setMobileOpen(false)} style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 2
+        }} />
+      )}
       {/* Sidebar */}
       <div style={{
-        width: collapsed ? 64 : 240, flexShrink: 0, background: NAVY_DARK,
+        width: sidebarCollapsed ? 64 : 240, flexShrink: 0, background: NAVY_DARK,
         color: '#cfd6e0', display: 'flex', flexDirection: 'column', padding: '20px 0',
-        transition: 'width 0.2s', overflow: 'hidden', boxShadow: '2px 0 12px rgba(0,0,0,0.25)',
-        position: 'relative', zIndex: 1
+        transition: 'width 0.2s, transform 0.2s', overflow: 'hidden', boxShadow: '2px 0 12px rgba(0,0,0,0.25)',
+        zIndex: 3,
+        ...(isMobile ? {
+          position: 'fixed', top: 0, bottom: 0, left: 0, height: '100vh',
+          transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)',
+        } : { position: 'relative' }),
       }}>
         <div style={{ padding: '0 16px 20px', display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{
@@ -48,7 +75,7 @@ export default function Layout({ user, onLogout, title, breadcrumb, children }) 
             background: GOLD, color: NAVY_DARK, fontWeight: 'bold', fontSize: 14,
             display: 'flex', alignItems: 'center', justifyContent: 'center'
           }}>UQ</div>
-          {!collapsed && (
+          {!sidebarCollapsed && (
             <div>
               <div style={{ fontWeight: 'bold', fontSize: 15, color: 'white' }}>Udyami Queens</div>
               <div style={{ fontSize: 11, opacity: 0.6 }}>Empowering Women Entrepreneurs</div>
@@ -56,7 +83,7 @@ export default function Layout({ user, onLogout, title, breadcrumb, children }) 
           )}
         </div>
 
-        <div style={{ flex: 1, marginTop: 10 }}>
+        <div style={{ flex: 1, marginTop: 10, overflowY: 'auto' }}>
           {visibleNavItems.map(item => {
             const active = location.pathname === item.path;
             return (
@@ -67,13 +94,13 @@ export default function Layout({ user, onLogout, title, breadcrumb, children }) 
                 borderLeft: active ? `3px solid ${GOLD}` : '3px solid transparent',
                 fontSize: 14, whiteSpace: 'nowrap'
               }}>
-                {!collapsed && item.label}
+                {!sidebarCollapsed && item.label}
               </Link>
             );
           })}
         </div>
 
-        {!collapsed && (
+        {!sidebarCollapsed && (
           <div style={{
             margin: '0 16px', padding: 14, borderRadius: 10,
             background: 'rgba(201,165,69,0.1)', border: `1px solid rgba(201,165,69,0.3)`,
@@ -89,47 +116,53 @@ export default function Layout({ user, onLogout, title, breadcrumb, children }) 
         {/* Top bar */}
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '14px 24px', background: NAVY, borderBottom: '1px solid #2a3547',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.15)', position: 'relative', zIndex: 1
+          padding: isMobile ? '14px 12px' : '14px 24px', background: NAVY, borderBottom: '1px solid #2a3547',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.15)', position: 'relative', zIndex: 1, gap: 10
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <button onClick={() => setCollapsed(!collapsed)} style={{
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
+            <button onClick={() => isMobile ? setMobileOpen(!mobileOpen) : setCollapsed(!collapsed)} style={{
               background: '#243044', border: 'none', color: '#cfd6e0', width: 32, height: 32,
-              borderRadius: 6, cursor: 'pointer', fontSize: 14
-            }}>{collapsed ? '>' : '<'}</button>
-            <div style={{ fontWeight: 'bold', fontSize: 15, color: 'white' }}>
+              borderRadius: 6, cursor: 'pointer', fontSize: 14, flexShrink: 0
+            }}>{isMobile ? '☰' : (collapsed ? '>' : '<')}</button>
+            <div style={{ fontWeight: 'bold', fontSize: 15, color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               Welcome back, {user.name.split(' ')[0]}
             </div>
           </div>
 
-          <input placeholder="Search by Batch ID, Order ID, or Product..." style={{
-            flex: 1, maxWidth: 380, margin: '0 24px', padding: 8, borderRadius: 6,
-            border: '1px solid #2a3547', background: '#0f1620', color: '#cfd6e0'
-          }} />
+          {!isMobile && (
+            <input placeholder="Search by Batch ID, Order ID, or Product..." style={{
+              flex: 1, maxWidth: 380, margin: '0 24px', padding: 8, borderRadius: 6,
+              border: '1px solid #2a3547', background: '#0f1620', color: '#cfd6e0'
+            }} />
+          )}
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{
-              background: '#243044', padding: '6px 12px', borderRadius: 6,
-              fontSize: 12, color: '#cfd6e0'
-            }}>EN</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+            {!isMobile && (
+              <span style={{
+                background: '#243044', padding: '6px 12px', borderRadius: 6,
+                fontSize: 12, color: '#cfd6e0'
+              }}>EN</span>
+            )}
             <span style={{
               background: GOLD, width: 30, height: 30, borderRadius: '50%',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 13, fontWeight: 'bold', color: NAVY_DARK
+              fontSize: 13, fontWeight: 'bold', color: NAVY_DARK, flexShrink: 0
             }}>{user.name[0]}</span>
-            <div style={{ fontSize: 12 }}>
-              <div style={{ color: 'white', fontWeight: 'bold' }}>{user.name}</div>
-              <div style={{ color: '#8b96a8' }}>{user.role}</div>
-            </div>
+            {!isMobile && (
+              <div style={{ fontSize: 12 }}>
+                <div style={{ color: 'white', fontWeight: 'bold' }}>{user.name}</div>
+                <div style={{ color: '#8b96a8' }}>{user.role}</div>
+              </div>
+            )}
             <button onClick={handleLogout} style={{
               background: '#3a1f1f', border: '1px solid #6b2c2c', color: '#e07a7a',
-              borderRadius: 6, cursor: 'pointer', padding: '6px 14px', fontSize: 12, marginLeft: 6
+              borderRadius: 6, cursor: 'pointer', padding: '6px 14px', fontSize: 12, marginLeft: 6, flexShrink: 0
             }}>Logout</button>
           </div>
         </div>
 
         {/* Page header */}
-        <div style={{ padding: '20px 24px 0' }}>
+        <div style={{ padding: isMobile ? '16px 12px 0' : '20px 24px 0' }}>
           <div style={{
             display: 'flex', alignItems: 'center', gap: 14, background: NAVY,
             border: '1px solid #2a3547', borderRadius: 10, padding: '16px 20px', marginBottom: 20,
@@ -146,7 +179,7 @@ export default function Layout({ user, onLogout, title, breadcrumb, children }) 
         </div>
 
         {/* Page content */}
-        <div style={{ padding: '0 24px 24px', flex: 1 }}>
+        <div style={{ padding: isMobile ? '0 12px 16px' : '0 24px 24px', flex: 1, minWidth: 0 }}>
           {children}
         </div>
       </div>
