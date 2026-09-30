@@ -18,6 +18,9 @@ import CeoDashboard from './pages/CeoDashboard';
 import DistrictDashboard from './pages/DistrictDashboard';
 import OperationsDashboard from './pages/OperationsDashboard';
 import TrainingDashboard from './pages/TrainingDashboard';
+import SellerDashboard from './pages/SellerDashboard';
+import HubDashboard from './pages/HubDashboard';
+import RiderDashboard from './pages/RiderDashboard';
 
 // Authentication removed at the user's explicit request — there is no login
 // page, and every visitor is treated as this fixed ADMIN identity.
@@ -44,6 +47,9 @@ function App() {
         <Route path="/district-dashboard" element={<DistrictDashboard user={user} />} />
         <Route path="/operations-dashboard" element={<OperationsDashboard user={user} />} />
         <Route path="/training" element={<TrainingDashboard user={user} />} />
+        <Route path="/seller-dashboard" element={<SellerDashboard user={user} />} />
+        <Route path="/hub-dashboard" element={<HubDashboard user={user} />} />
+        <Route path="/rider-dashboard" element={<RiderDashboard user={user} />} />
         <Route path="/users" element={<UsersRoles user={user} />} />
         <Route path="/settings" element={<Settings user={user} />} />
         <Route path="/" element={<Navigate to="/dashboard" />} />
