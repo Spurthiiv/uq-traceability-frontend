@@ -14,6 +14,7 @@ function useIsMobile() {
 
 const navItems = [
   { label: 'Dashboard', path: '/dashboard', roles: ['ADMIN','OPS','QUEEN','LOGISTICS','RETAILER'] },
+  { label: 'CEO / Investor', path: '/ceo-dashboard', roles: ['ADMIN'] },
   { label: 'Supply Chain', path: '/supply-chain', roles: ['ADMIN','OPS'] },
   { label: 'Blockchain Ledger', path: '/ledger', roles: ['ADMIN','OPS'] },
   { label: 'Products & Batches', path: '/products', roles: ['ADMIN','OPS','QUEEN'] },
