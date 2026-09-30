@@ -16,6 +16,7 @@ const navItems = [
   { label: 'Dashboard', path: '/dashboard', roles: ['ADMIN','OPS','QUEEN','LOGISTICS','RETAILER'] },
   { label: 'CEO / Investor', path: '/ceo-dashboard', roles: ['ADMIN'] },
   { label: 'District / State', path: '/district-dashboard', roles: ['ADMIN'] },
+  { label: 'Operations', path: '/operations-dashboard', roles: ['ADMIN','OPS'] },
   { label: 'Supply Chain', path: '/supply-chain', roles: ['ADMIN','OPS'] },
   { label: 'Blockchain Ledger', path: '/ledger', roles: ['ADMIN','OPS'] },
   { label: 'Products & Batches', path: '/products', roles: ['ADMIN','OPS','QUEEN'] },
