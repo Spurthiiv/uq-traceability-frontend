@@ -1,6 +1,4 @@
-import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import BatchDetail from './pages/BatchDetail';
 import TracePage from './pages/TracePage';
@@ -17,74 +15,31 @@ import MasterData from './pages/MasterData';
 import ComplianceAudit from './pages/ComplianceAudit';
 import GeofencingMap from './pages/GeofencingMap';
 
+// Authentication removed at the user's explicit request — there is no login
+// page, and every visitor is treated as this fixed ADMIN identity.
+const user = { id: 'no-auth-admin', name: 'Admin', role: 'ADMIN', email: 'admin@local' };
+
 function App() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const stored = localStorage.getItem('uq_user');
-    if (stored) setUser(JSON.parse(stored));
-    setLoading(false);
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('uq_token');
-    localStorage.removeItem('uq_user');
-    setUser(null);
-  };
-
-  if (loading) return null;
-
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={
-          user ? <Navigate to="/dashboard" /> : <Login onLogin={setUser} />
-        } />
-        <Route path="/dashboard" element={
-          user ? <Dashboard user={user} onLogout={handleLogout} /> : <Navigate to="/login" />
-        } />
-        <Route path="/batches/:id" element={
-          user ? <BatchDetail user={user} onLogout={handleLogout} /> : <Navigate to="/login" />
-        } />
+        <Route path="/dashboard" element={<Dashboard user={user} />} />
+        <Route path="/batches/:id" element={<BatchDetail user={user} />} />
         <Route path="/trace/:id" element={<TracePage />} />
-<Route path="/supply-chain" element={
-  user ? <SupplyChain user={user} onLogout={handleLogout} /> : <Navigate to="/login" />
-} />
-<Route path="/ledger" element={
-  user ? <BlockchainLedger user={user} onLogout={handleLogout} /> : <Navigate to="/login" />
-} />
-<Route path="/products" element={
-  user ? <ProductsBatches user={user} onLogout={handleLogout} /> : <Navigate to="/login" />
-} />
-<Route path="/products/:id" element={
-  user ? <ProductDetail user={user} onLogout={handleLogout} /> : <Navigate to="/login" />
-} />
-<Route path="/quality" element={
-  user ? <QualityCompliance user={user} onLogout={handleLogout} /> : <Navigate to="/login" />
-} />
-<Route path="/finance" element={
-  user ? <FinanceSettlements user={user} onLogout={handleLogout} /> : <Navigate to="/login" />
-} />
-<Route path="/reports" element={
-  user ? <ReportsAnalytics user={user} onLogout={handleLogout} /> : <Navigate to="/login" />
-} />
-<Route path="/master-data" element={
-  user ? <MasterData user={user} onLogout={handleLogout} /> : <Navigate to="/login" />
-} />
-<Route path="/compliance" element={
-  user ? <ComplianceAudit user={user} onLogout={handleLogout} /> : <Navigate to="/login" />
-} />
-<Route path="/geofencing" element={
-  user ? <GeofencingMap user={user} onLogout={handleLogout} /> : <Navigate to="/login" />
-} />
-<Route path="/users" element={
-  user ? <UsersRoles user={user} onLogout={handleLogout} /> : <Navigate to="/login" />
-} />
-<Route path="/settings" element={
-  user ? <Settings user={user} onLogout={handleLogout} /> : <Navigate to="/login" />
-} />
-<Route path="/" element={<Navigate to={user ? "/dashboard" : "/login"} />} />
+        <Route path="/supply-chain" element={<SupplyChain user={user} />} />
+        <Route path="/ledger" element={<BlockchainLedger user={user} />} />
+        <Route path="/products" element={<ProductsBatches user={user} />} />
+        <Route path="/products/:id" element={<ProductDetail user={user} />} />
+        <Route path="/quality" element={<QualityCompliance user={user} />} />
+        <Route path="/finance" element={<FinanceSettlements user={user} />} />
+        <Route path="/reports" element={<ReportsAnalytics user={user} />} />
+        <Route path="/master-data" element={<MasterData user={user} />} />
+        <Route path="/compliance" element={<ComplianceAudit user={user} />} />
+        <Route path="/geofencing" element={<GeofencingMap user={user} />} />
+        <Route path="/users" element={<UsersRoles user={user} />} />
+        <Route path="/settings" element={<Settings user={user} />} />
+        <Route path="/" element={<Navigate to="/dashboard" />} />
+        <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>
     </BrowserRouter>
   );

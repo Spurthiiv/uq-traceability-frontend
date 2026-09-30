@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 function useIsMobile() {
@@ -32,17 +32,11 @@ const NAVY_DARK = '#141b28';
 const GOLD = '#c9a545';
 const GOLD_LIGHT = '#e0c46a';
 
-export default function Layout({ user, onLogout, title, breadcrumb, children }) {
+export default function Layout({ user, title, breadcrumb, children }) {
   const location = useLocation();
-  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const isMobile = useIsMobile();
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  const handleLogout = () => {
-    onLogout();
-    navigate('/login');
-  };
 
   // On mobile, close the drawer automatically whenever the route changes
   // (e.g. tapping a nav link) — otherwise it stays open over the new page.
@@ -154,10 +148,6 @@ export default function Layout({ user, onLogout, title, breadcrumb, children }) 
                 <div style={{ color: '#8b96a8' }}>{user.role}</div>
               </div>
             )}
-            <button onClick={handleLogout} style={{
-              background: '#3a1f1f', border: '1px solid #6b2c2c', color: '#e07a7a',
-              borderRadius: 6, cursor: 'pointer', padding: '6px 14px', fontSize: 12, marginLeft: 6, flexShrink: 0
-            }}>Logout</button>
           </div>
         </div>
 
