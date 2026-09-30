@@ -14,7 +14,6 @@ function useIsMobile() {
 
 const navItems = [
   { label: 'Dashboard', path: '/dashboard', roles: ['ADMIN','OPS','QUEEN','LOGISTICS','RETAILER'] },
-  { label: 'CEO / Investor', path: '/ceo-dashboard', roles: ['ADMIN'] },
   { label: 'District / State', path: '/district-dashboard', roles: ['ADMIN'] },
   { label: 'Operations', path: '/operations-dashboard', roles: ['ADMIN','OPS'] },
   { label: 'Training', path: '/training', roles: ['ADMIN','OPS'] },

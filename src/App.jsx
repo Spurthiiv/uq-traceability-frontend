@@ -14,7 +14,6 @@ import Settings from './pages/Settings';
 import MasterData from './pages/MasterData';
 import ComplianceAudit from './pages/ComplianceAudit';
 import GeofencingMap from './pages/GeofencingMap';
-import CeoDashboard from './pages/CeoDashboard';
 import DistrictDashboard from './pages/DistrictDashboard';
 import OperationsDashboard from './pages/OperationsDashboard';
 import TrainingDashboard from './pages/TrainingDashboard';
@@ -43,7 +42,6 @@ function App() {
         <Route path="/master-data" element={<MasterData user={user} />} />
         <Route path="/compliance" element={<ComplianceAudit user={user} />} />
         <Route path="/geofencing" element={<GeofencingMap user={user} />} />
-        <Route path="/ceo-dashboard" element={<CeoDashboard user={user} />} />
         <Route path="/district-dashboard" element={<DistrictDashboard user={user} />} />
         <Route path="/operations-dashboard" element={<OperationsDashboard user={user} />} />
         <Route path="/training" element={<TrainingDashboard user={user} />} />
