@@ -15,6 +15,7 @@ import MasterData from './pages/MasterData';
 import ComplianceAudit from './pages/ComplianceAudit';
 import GeofencingMap from './pages/GeofencingMap';
 import CeoDashboard from './pages/CeoDashboard';
+import DistrictDashboard from './pages/DistrictDashboard';
 
 // Authentication removed at the user's explicit request — there is no login
 // page, and every visitor is treated as this fixed ADMIN identity.
@@ -38,6 +39,7 @@ function App() {
         <Route path="/compliance" element={<ComplianceAudit user={user} />} />
         <Route path="/geofencing" element={<GeofencingMap user={user} />} />
         <Route path="/ceo-dashboard" element={<CeoDashboard user={user} />} />
+        <Route path="/district-dashboard" element={<DistrictDashboard user={user} />} />
         <Route path="/users" element={<UsersRoles user={user} />} />
         <Route path="/settings" element={<Settings user={user} />} />
         <Route path="/" element={<Navigate to="/dashboard" />} />
